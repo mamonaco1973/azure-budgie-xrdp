@@ -6,6 +6,7 @@
 # resolution, and Linux VMs in the VNet can mount the share privately.
 #
 # Key points:
+#
 #   - Premium FileStorage required for NFS 4.1.
 #   - NFS share minimum quota is 100 GiB.
 #   - Public access disabled; traffic stays in the VNet.
@@ -21,8 +22,8 @@ resource "azurerm_storage_account" "nfs_storage_account" {
   # - LRS replication used for labs/demos.
   # - Public access disabled; private endpoint only.
   name                         = "nfs${random_string.vm_suffix.result}"
-  resource_group_name          = data.azurerm_resource_group.mate.name
-  location                     = data.azurerm_resource_group.mate.location
+  resource_group_name          = data.azurerm_resource_group.budgie.name
+  location                     = data.azurerm_resource_group.budgie.location
   account_kind                 = "FileStorage"
   account_tier                 = "Premium"
   account_replication_type     = "LRS"
@@ -54,7 +55,7 @@ resource "azurerm_storage_share" "nfs" {
 # ==============================================================================
 resource "azurerm_private_dns_zone" "file" {
   name                = "privatelink.file.core.windows.net"
-  resource_group_name = data.azurerm_resource_group.mate.name
+  resource_group_name = data.azurerm_resource_group.budgie.name
 }
 
 # ------------------------------------------------------------------------------
@@ -63,7 +64,7 @@ resource "azurerm_private_dns_zone" "file" {
 # Links the private DNS zone to the AD VNet so VMs resolve Azure Files privately.
 resource "azurerm_private_dns_zone_virtual_network_link" "file_link" {
   name                  = "vnet-link"
-  resource_group_name   = data.azurerm_resource_group.mate.name
+  resource_group_name   = data.azurerm_resource_group.budgie.name
   private_dns_zone_name = azurerm_private_dns_zone.file.name
   virtual_network_id    = data.azurerm_virtual_network.ad_vnet.id
 }
@@ -79,8 +80,8 @@ resource "azurerm_private_dns_zone_virtual_network_link" "file_link" {
 # ==============================================================================
 resource "azurerm_private_endpoint" "pe_file" {
   name                = "pe-st-file"
-  location            = data.azurerm_resource_group.mate.location
-  resource_group_name = data.azurerm_resource_group.mate.name
+  location            = data.azurerm_resource_group.budgie.location
+  resource_group_name = data.azurerm_resource_group.budgie.name
   subnet_id           = data.azurerm_subnet.vm_subnet.id
 
   # ----------------------------------------------------------------------------
