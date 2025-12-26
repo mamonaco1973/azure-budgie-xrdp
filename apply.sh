@@ -43,14 +43,14 @@ cd ..
 # ------------------------------------------------------------------------------
 cd 02-packer
 
-packer init .
-packer build \
- -var="client_id=$ARM_CLIENT_ID" \
- -var="client_secret=$ARM_CLIENT_SECRET" \
- -var="subscription_id=$ARM_SUBSCRIPTION_ID" \
- -var="tenant_id=$ARM_TENANT_ID" \
- -var="resource_group=budgie-project-rg" \
- budgie_image.pkr.hcl
+#packer init .
+#packer build \
+# -var="client_id=$ARM_CLIENT_ID" \
+# -var="client_secret=$ARM_CLIENT_SECRET" \
+# -var="subscription_id=$ARM_SUBSCRIPTION_ID" \
+# -var="tenant_id=$ARM_TENANT_ID" \
+# -var="resource_group=budgie-project-rg" \
+# budgie_image.pkr.hcl
 
 cd ..
 
