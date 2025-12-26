@@ -2,17 +2,18 @@
 set -euo pipefail
 
 # ================================================================================
-# XRDP Installation and MATE Session Configuration Script
+# XRDP Installation and Budgie Session Configuration Script
 # ================================================================================
 # Description:
 #   Installs XRDP and replaces the default /etc/xrdp/startwm.sh script so that
-#   all XRDP logins launch XFCE without the untrusted launcher dialog or the
-#   default Ubuntu session. The script also ensures the file has correct
-#   permissions and enables the XRDP service at boot.
+#   all XRDP logins launch the Budgie desktop instead of the default Ubuntu
+#   session. This avoids the untrusted launcher dialog and ensures a clean,
+#   predictable X11-based desktop for remote users.
 #
 # Notes:
 #   - Uses apt-get for predictable automation behavior.
-#   - Writes a clean startwm.sh that invokes mate-session.
+#   - Writes a clean startwm.sh that invokes budgie-desktop directly.
+#   - Budgie runs on X11 and is fully compatible with XRDP.
 #   - Script exits on any error due to 'set -euo pipefail'.
 # ================================================================================
 
@@ -23,7 +24,7 @@ sudo apt-get update -y
 sudo apt-get install -y xrdp
 
 # ================================================================================
-# Step 2: Replace /etc/xrdp/startwm.sh with MATE session launcher
+# Step 2: Replace /etc/xrdp/startwm.sh with Budgie session launcher
 # ================================================================================
 sudo tee /etc/xrdp/startwm.sh >/dev/null <<'EOF'
 #!/bin/sh
@@ -42,8 +43,13 @@ if test -r ~/.profile; then
     . ~/.profile
 fi
 
-# Start MATE session
-mate-session
+# Start Budgie session
+#
+# Notes:
+#   - Budgie uses X11 and does not support Wayland.
+#   - budgie-desktop is the correct session entrypoint for XRDP.
+#
+exec budgie-desktop
 
 EOF
 
@@ -56,16 +62,16 @@ echo "NOTE: /etc/xrdp/startwm.sh replaced and permissions set."
 # ================================================================================
 # Step 4: Enable XRDP service
 # ================================================================================
-#sudo systemctl enable xrdp
+sudo systemctl enable xrdp
 echo "NOTE: XRDP installation and configuration complete."
 
-# ---------------------------------------------------------------------------------
-# Deploy PAM script to create home directories on first xrdp login
-# ---------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------
+# Deploy PAM script to create home directories on first XRDP login
+# --------------------------------------------------------------------------------
 
 cat <<'EOF' | tee /etc/pam.d/xrdp-mkhomedir.sh > /dev/null
 #!/bin/bash
-echo "NOTE: Creating home directory for user $PAM_USER" 
+echo "NOTE: Creating home directory for user $PAM_USER"
 su -c "exit" $PAM_USER
 chmod 700 /home/*
 EOF

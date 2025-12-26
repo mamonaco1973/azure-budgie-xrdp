@@ -44,7 +44,7 @@ budgie_dns=$(az network public-ip show \
 if [ -z "$budgie_dns" ]; then
   echo "ERROR: No DNS label found for budgie-public-ip"
 else
-  echo "NOTE: BUDGIE Instance FQDN: $budgie_dns"
+  echo "NOTE: Budgie Desktop Instance FQDN: $budgie_dns"
 
   # ------------------------------------------------------------------------
   # Wait for SSH (port 22) on BUDGIE instance
