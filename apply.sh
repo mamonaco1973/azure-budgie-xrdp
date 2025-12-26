@@ -1,12 +1,12 @@
 #!/bin/bash
 # ==============================================================================
-# Build Script for MATE XRDP Project on Azure
+# Build Script for BUDGIE XRDP Project on Azure
 # Purpose:
 #   - Validates the environment and prerequisites before deployment.
 #   - Deploys the project in two phases:
 #       1. Directory layer: Key Vault, Mini-AD and base infra.
-#       2. Server layer: MATE VM, AD Admin VM, and secrets.
-#   - Uses Packer to build the MATE image before server deployment.
+#       2. Server layer: BUDGIE VM, AD Admin VM, and secrets.
+#   - Uses Packer to build the BUDGIE image before server deployment.
 # Notes:
 #   - Assumes Azure CLI and Terraform are installed and logged in.
 #   - Assumes check_env.sh validates required vars and tools.
@@ -39,7 +39,7 @@ fi
 cd ..
 
 # ------------------------------------------------------------------------------
-# Build MATE image with Packer
+# Build BUDGIE image with Packer
 # ------------------------------------------------------------------------------
 cd 02-packer
 
@@ -49,28 +49,28 @@ packer build \
  -var="client_secret=$ARM_CLIENT_SECRET" \
  -var="subscription_id=$ARM_SUBSCRIPTION_ID" \
  -var="tenant_id=$ARM_TENANT_ID" \
- -var="resource_group=mate-project-rg" \
- mate_image.pkr.hcl
+ -var="resource_group=budgie-project-rg" \
+ budgie_image.pkr.hcl
 
 cd ..
 
 # ------------------------------------------------------------------------------
-# Deploy server layer (AD Admin VM and MATE VM)
+# Deploy server layer (AD Admin VM and BUDGIE VM)
 # ------------------------------------------------------------------------------
 cd 03-servers
 
 # ------------------------------------------------------------------------------
-# Fetch latest MATE image from packer resource group
+# Fetch latest BUDGIE image from packer resource group
 # ------------------------------------------------------------------------------
-mate_image_name=$(az image list \
-  --resource-group mate-project-rg \
-  --query "[?starts_with(name, 'mate_image')]|sort_by(@, &name)[-1].name" \
+budgie_image_name=$(az image list \
+  --resource-group budgie-project-rg \
+  --query "[?starts_with(name, 'budgie_image')]|sort_by(@, &name)[-1].name" \
   --output tsv)
 
-echo "NOTE: Using latest MATE image: $mate_image_name"
+echo "NOTE: Using latest BUDGIE image: $budgie_image_name"
 
-if [ -z "$mate_image_name" ]; then
-  echo "ERROR: No MATE image found in mate-project-rg."
+if [ -z "$budgie_image_name" ]; then
+  echo "ERROR: No BUDGIE image found in budgie-project-rg."
   exit 1
 fi
 
@@ -78,7 +78,7 @@ fi
 # Discover Key Vault created in Phase 1
 # ------------------------------------------------------------------------------
 vault=$(az keyvault list \
-  --resource-group mate-network-rg \
+  --resource-group budgie-network-rg \
   --query "[?starts_with(name, 'ad-key-vault')].name | [0]" \
   --output tsv)
 
@@ -91,7 +91,7 @@ echo "NOTE: Using Key Vault: $vault"
 terraform init
 terraform apply \
   -var="vault_name=$vault" \
-  -var="mate_image_name=$mate_image_name" \
+  -var="budgie_image_name=$budgie_image_name" \
   -auto-approve
 
 cd ..

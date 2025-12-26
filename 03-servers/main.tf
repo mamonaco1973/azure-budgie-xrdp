@@ -34,7 +34,7 @@ data "azurerm_client_config" "current" {}
 variable "resource_group_name" {
   description = "Name of the Azure Resource Group for the project"
   type        = string
-  default     = "mate-project-rg"
+  default     = "budgie-project-rg"
 }
 
 # ------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ variable "resource_group_name" {
 variable "network_resource_group_name" {
   description = "Name of the Resource Group for networking resources"
   type        = string
-  default     = "mate-network-rg"
+  default     = "budgie-network-rg"
 }
 
 # ------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ variable "vault_name" {
 # ------------------------------------------------------------------------------
 # Load details for the main project resource group
 # ------------------------------------------------------------------------------
-data "azurerm_resource_group" "mate" {
+data "azurerm_resource_group" "budgie" {
   name = var.resource_group_name
 }
 
@@ -94,17 +94,17 @@ data "azurerm_key_vault" "ad_key_vault" {
 }
 
 # ------------------------------------------------------------------------------
-# Input variable: name of the custom MATE image in Azure
+# Input variable: name of the custom BUDGIE image in Azure
 # ------------------------------------------------------------------------------
-variable "mate_image_name" {
+variable "budgie_image_name" {
   description = "Name of the custom Azure Linux image"
   type        = string
 }
 
 # ------------------------------------------------------------------------------
-# Load custom MATE image from the resource group
+# Load custom BUDGIE image from the resource group
 # ------------------------------------------------------------------------------
-data "azurerm_image" "mate_image" {
-  name                = var.mate_image_name
-  resource_group_name = data.azurerm_resource_group.mate.name
+data "azurerm_image" "budgie_image" {
+  name                = var.budgie_image_name
+  resource_group_name = data.azurerm_resource_group.budgie.name
 }

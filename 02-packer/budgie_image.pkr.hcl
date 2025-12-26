@@ -1,8 +1,8 @@
 # ==============================================================================
-# Packer Build: Lubuntu Image for Azure (Ubuntu 24.04 LTS)
+# Packer Build: Budgie Image for Azure (Ubuntu 24.04 LTS)
 #------------------------------------------------------------------------------
 # Purpose:
-#   - Builds a custom Azure Managed Image with Lubuntu and XRDP
+#   - Builds a custom Azure Managed Image with Budgie and XRDP
 #   - Starts from Canonical Ubuntu 24.04 LTS
 #   - Installs desktop env, tools, browsers, and dev utilities
 #   - Produces a timestamped image for VM or VMSS deployments
@@ -74,7 +74,7 @@ variable "vm_size" {
 # Source Block: Azure Image Builder
 # - Defines base Ubuntu image and build parameters
 # ------------------------------------------------------------------------------
-source "azure-arm" "mate_image" {
+source "azure-arm" "budgie_image" {
   client_id       = var.client_id
   client_secret   = var.client_secret
   subscription_id = var.subscription_id
@@ -90,7 +90,7 @@ source "azure-arm" "mate_image" {
   os_type         = "Linux"
   ssh_username    = "ubuntu"
 
-  managed_image_name = "mate_image_${local.timestamp}"
+  managed_image_name = "budgie_image_${local.timestamp}"
   managed_image_resource_group_name = var.resource_group
 }
 
@@ -99,7 +99,7 @@ source "azure-arm" "mate_image" {
 # - Executes each setup script inside the build VM
 # ------------------------------------------------------------------------------
 build {
-  sources = ["source.azure-arm.mate_image"]
+  sources = ["source.azure-arm.budgie_image"]
 
   # Base packages
   provisioner "shell" {
@@ -107,9 +107,9 @@ build {
     execute_command = "sudo -E bash '{{.Path}}'"
   }
 
-  # MATE desktop
+  # BUDGIE desktop
   provisioner "shell" {
-    script          = "./mate.sh"
+    script          = "./budgie.sh"
     execute_command = "sudo -E bash '{{.Path}}'"
   }
 
