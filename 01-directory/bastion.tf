@@ -93,7 +93,8 @@ resource "azurerm_bastion_host" "bastion_host" {
 
   depends_on = [ azurerm_subnet.vm_subnet, 
                  azurerm_subnet.mini_ad_subnet, 
-                 azurerm_subnet.bastion_subnet ]   
+                 azurerm_subnet.bastion_subnet,
+                 azurerm_subnet_nat_gateway_association.bastion_nsg_assoc ]   
 
 }
 
