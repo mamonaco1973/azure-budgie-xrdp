@@ -1,7 +1,7 @@
-# Azure MATE XRDP Cloud Development Environment
+# Azure Budgie XRDP Cloud Development Environment
 
 This project provides a **complete cloud-based Linux desktop development environment**
-powered by **MATE + XRDP**, **Mini-Active Directory**, and **Azure Files (NFS)** on
+powered by **Budgie + XRDP**, **Mini-Active Directory**, and **Azure Files (NFS)** on
 the Microsoft Azure platform.
 
 It is designed as a **universal dev workstation** that contains the full superset of
@@ -12,11 +12,11 @@ tools, dependencies, and configurations used across all build projects on my cha
 Instead of manually configuring a workstation for each tutorial, demo, or cloud
 project, this solution automatically provisions:
 
-1. **A Custom MATE XRDP Azure Image (Packer)**
+1. **A Custom Budgie XRDP Azure Image (Packer)**
    - Preloaded with Chrome, Firefox (deb), VS Code, Docker, KRDC, Postman
    - Includes all development tooling used across channel projects:
      **Packer, Terraform, Docker CLI, Azure CLI, AWS CLI v2, Google Cloud CLI**
-   - Snap-free, clean, lightweight MATE desktop
+   - Snap-free, clean, lightweight Budgie desktop
    - XRDP fully configured with all fixes, enhancements, and defaults
    - Desktop/panel icons, terminal emulator defaults, and `/etc/skel` customizations
 
@@ -25,8 +25,8 @@ project, this solution automatically provisions:
    - Domain users generated from a template with friendly passwords
    - Central authentication for Linux and Windows clients
 
-3. **Domain-Joined MATE XRDP VM (Terraform)**
-   - Deploys the MATE XRDP instance using the Packer-built Azure Managed Image
+3. **Domain-Joined Budgie XRDP VM (Terraform)**
+   - Deploys the Budgie XRDP instance using the Packer-built Azure Managed Image
    - Automatically joins the Mini-AD domain during boot
    - Ensures consistent user profiles and default settings through `/etc/skel`
 
@@ -39,7 +39,7 @@ The result is a **disposable, reproducible, cloud-hosted Linux workstation** tha
 can be used for **any build, automation, or cloud project**
 featured on the channel.
 
-![Azure diagram](azure-mate.png)
+![Azure diagram](azure-budgie.png)
 
 
 ## Prerequisites
@@ -55,8 +55,8 @@ If this is your first time watching our content, we recommend starting with this
 ## Download this Repository
 
 ```bash
-git clone https://github.com/mamonaco1973/azure-mate-xrdp.git
-cd azure-mate-xrdp
+git clone https://github.com/mamonaco1973/azure-budgie-xrdp.git
+cd azure-budgie-xrdp
 ```
 
 
@@ -65,7 +65,7 @@ cd azure-mate-xrdp
 Run [check_env](check_env.sh) to validate your environment, then run [apply](apply.sh) to provision the infrastructure.
 
 ```bash
-azureuser@devel~/azure-mate-xrdp$ ./apply.sh
+azureuser@devel~/azure-budgie-xrdp$ ./apply.sh
 NOTE: Validating that required commands are found in your PATH.
 NOTE: az is found in the current PATH.
 NOTE: terraform is found in the current PATH.
@@ -98,7 +98,7 @@ When the deployment completes, the following resources are created:
   - A dedicated Azure Virtual Network with public and private subnets  
   - Public IPs and optionally Bastion for secure management access  
   - Route tables and NSGs configured to support AD, Azure Files (NFS),  
-    and the MATE XRDP VM  
+    and the Budgie XRDP VM  
 
 - **Security & Identity:**  
   - Network Security Groups for the domain controller, Linux desktop VM,  
@@ -119,11 +119,11 @@ When the deployment completes, the following resources are created:
 - **Azure Files (Premium NFS):**  
   - Premium FileStorage account with NFS 4.1 shares  
   - Private endpoints and NSGs allowing NFS traffic (TCP/2049) from XRDP VMs  
-  - Serves as centralized home directory storage for MATE desktop users  
+  - Serves as centralized home directory storage for Budgie desktop users  
 
-- **Packer-Built MATE XRDP Image:**  
+- **Packer-Built Budgie XRDP Image:**  
   - Custom Azure Managed Image containing:  
-    - MATE (LXqt), XRDP, Chrome, Firefox (deb), VS Code  
+    - Budgie Desktop, XRDP, Chrome, Firefox (deb), VS Code  
     - Development tools: **Packer, Terraform, Docker CLI, Azure CLI,  
       AWS CLI v2, Google Cloud CLI**  
     - KRDC, Postman, and all channel-wide tooling  
@@ -132,7 +132,7 @@ When the deployment completes, the following resources are created:
   - All XRDP fixes applied (session startup, untrusted launcher behavior,  
     consistent terminal defaults, etc.)  
 
-- **MATE XRDP Desktop VM:**  
+- **Budgie XRDP Desktop VM:**  
   - Azure VM deployed from the custom Managed Image  
   - Automatically joins the Mini-AD domain during cloud-init  
   - Home directories mounted from Azure Files (NFS 4.1)  
@@ -147,7 +147,7 @@ When the deployment completes, the following resources are created:
 
 ### Users and Groups
 
-As part of this project, when the domain controller is provisioned, a set of sample **users** and **groups** are automatically created through Terraform-provisioned scripts running on the mini-ad server. These resources are intended for **testing and demonstration purposes**, showcasing how to automate user and group provisioning in a self-managed Active Directory environment.
+As part of this project, when the domain controller is provisioned, a set of sample **users** and **groups** are automatically created through Terraform-provisioned scripts running on the mini-ad server. These resources are intended for **testing and demonstration purposes**, showcasing how to autobudgie user and group provisioning in a self-managed Active Directory environment.
 
 
 #### Groups Created
@@ -204,7 +204,7 @@ Follow these steps to provision a new user in the Active Directory domain and va
    - Open **PowerShell** on the AD server.  
    - Run the script located at:  
      ```powershell
-     Z:\azure-mate-xrdp\04-utils\getNextUID.bat
+     Z:\azure-budgie-xrdp\04-utils\getNextUID.bat
      ```  
    - This script returns the next available **`uidNumber`** to assign to the new account.  
 
@@ -222,7 +222,7 @@ Follow these steps to provision a new user in the Active Directory domain and va
      - **us** (or other geographic/departmental group as applicable).  
 
 8. **Validate User on Linux**  
-   - Open an **AWS Systems Manager (SSM)** session to the **`mate-instance`** instance.  
+   - Open an **AWS Systems Manager (SSM)** session to the **`budgie-instance`** instance.  
    - Run the following command to confirm the user’s identity mapping:  
      ```bash
      id mcloud
@@ -245,4 +245,4 @@ When you are finished testing, you can remove all provisioned resources with:
 ./destroy.sh
 ```
 
-This will remove all Azure resources created by the project — including the resource group, virtual network, subnets, network security groups, public IPs, NICs, the MATE VM, and any supporting infrastructure. Secrets stored in Azure Key Vault will also be deleted unless a retention policy prevents their removal.
+This will remove all Azure resources created by the project — including the resource group, virtual network, subnets, network security groups, public IPs, NICs, the Budgie VM, and any supporting infrastructure. Secrets stored in Azure Key Vault will also be deleted unless a retention policy prevents their removal.
